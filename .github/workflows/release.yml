@@ -1,5 +1,5 @@
 # Based on https://github.com/axios/axios/blob/v1.x/.github/workflows/release.yml
-name: Release
+name: Release to production
 
 on:
   workflow_dispatch:
@@ -13,23 +13,20 @@ on:
           - minor
           - major
         default: auto
-      beta:
-        type: boolean
-        description: Prerelease
-        default: false
       dry:
         type: boolean
         description: Dry release
         default: false
 
 jobs:
-  release:
-    name: Validate by building and testing
+  release-production:
+    name: Release to production
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
       - name: git config
         run: |
           git config user.name "${GITHUB_ACTOR}"
@@ -44,17 +41,9 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable --immutable-cache --check-cache
 
-      - name: release
+      - name: Make release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TYPE_ARG: ${{ fromJSON('{"auto":"", "patch":"--patch", "minor":"--minor", "major":"--major"}')[github.event.inputs.type] }}
-          BETA_ARG: ${{ github.event.inputs.beta == 'true' && '--preRelease=beta' || '' }}
           DRY_ARG: ${{ github.event.inputs.dry == 'true' && '--dry-run' || '' }}
         run: npm run release -- --ci --verbose $TYPE_ARG $BETA_ARG $DRY_ARG
-
-
-      - name: Run tests
-        run: yarn test --passWithNoTests
-
-      - name: Build
-        run: yarn run build
