@@ -1,6 +1,6 @@
 git:
   requireBranch: main
-  commitMessage: 'chore: release v${version}'
+  commit: false
 github:
   release: true
 npm:
