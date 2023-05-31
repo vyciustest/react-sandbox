@@ -21,6 +21,7 @@ on:
 jobs:
   release-production:
     name: Release to production
+    environment: Production
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
