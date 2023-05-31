@@ -9,8 +9,6 @@ jobs:
   validate:
     name: Validate by building and testing
     runs-on: ubuntu-latest
-
-
     steps:
       - uses: actions/checkout@v3
 

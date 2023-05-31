@@ -47,3 +47,11 @@ jobs:
           TYPE_ARG: ${{ fromJSON('{"auto":"", "patch":"--patch", "minor":"--minor", "major":"--major"}')[github.event.inputs.type] }}
           DRY_ARG: ${{ github.event.inputs.dry == 'true' && '--dry-run' || '' }}
         run: npm run release -- --ci --verbose $TYPE_ARG $BETA_ARG $DRY_ARG
+
+      - name: Push docker image
+        uses: AplinkosMinisterija/reusable-workflows/.github/workflows/docker-build-push.yml@main
+        with:
+          docker-image: ghcr.io/vycius/react-sandbox
+          environment: production
+          runs-on: ubuntu-latest
+          latest-tag: true
