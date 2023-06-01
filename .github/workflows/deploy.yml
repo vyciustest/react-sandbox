@@ -14,6 +14,7 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GH_DEPLOY_TOKEN }}
     steps:
+      - uses: actions/checkout@v3
       - name: Trigger Deploy Workflow
         run: |
           gh workflow run ${{ secrets.GH_DEPLOY_WORKFLOW }} --repo ${{ secrets.GH_DEPLOY_REPO }} --field environment=${{ inputs.environment }}
