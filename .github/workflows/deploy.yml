@@ -27,6 +27,8 @@ jobs:
             });
 
             core.setOutput('runId', runId);
+        env:
+          GH_TOKEN: ${{ secrets.GH_DEPLOY_TOKEN }}
 
       - name: Wait for Deploy Workflow to Complete
         id: wait-for-deploy
