@@ -19,6 +19,8 @@ jobs:
         run: |
           gh workflow run ${{ secrets.GH_DEPLOY_WORKFLOW }} --repo ${{ secrets.GH_DEPLOY_REPO }} --field environment=${{ inputs.environment }}
 
+      - run: gh run list --repo vycius/private-repo-sandbox --workflow=test.yml --json=databaseId --limit=1 --jq='.[0].databaseId'
+
       - run: echo $(gh run list --repo ${{ secrets.GH_DEPLOY_REPO }} --workflow ${{ secrets.GH_DEPLOY_WORKFLOW }} --json databaseId --limit 1 --jq '.[0].id')
 
       - name: Get runId
