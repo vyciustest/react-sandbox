@@ -11,34 +11,23 @@ jobs:
   deploy-by-trigger:
     name: Release to production
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GH_DEPLOY_TOKEN }}
     steps:
       - name: Trigger Deploy Workflow
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const { data: { id: runId } } = await github.actions.createWorkflowDispatch({
-              owner: '${{ secrets.GH_DEPLOY_OWNER }}',
-              repo: '${{ secrets.GH_DEPLOY_REPO }}',
-              workflow_id: '${{ secrets.GH_DEPLOY_WORKFLOW }}',
-              ref: 'main',
-              inputs: {
-                environment: '${{ inputs.environment }}'
-              }
-            });
-
-            core.setOutput('runId', runId);
-        env:
-          GH_TOKEN: ${{ secrets.GH_DEPLOY_TOKEN }}
+        run: |
+          gh workflow run ${{ secrets.GH_DEPLOY_WORKFLOW }} --repo ${{ secrets.GH_DEPLOY_REPO }} --field environment=${{ inputs.environment }}
 
       - name: Wait for Deploy Workflow to Complete
-        id: wait-for-deploy
         run: |
-          gh run watch ${{ steps.trigger.outputs.runId }}
+          runId=$(gh run list --repo ${{ secrets.GH_DEPLOY_REPO }} --workflow ${{ secrets.GH_DEPLOY_WORKFLOW }} --json id --limit 1 --jq '.[0].id')
+          gh run watch ${{ secrets.GH_DEPLOY_REPO }} $runId
 
       - name: Get databaseId
         id: get-database-id
         run: |
-          databaseId=$(gh run list -w ${{ secrets.GH_DEPLOY_WORKFLOW }} --repo ${{ secrets.GH_DEPLOY_REPO }} --json databaseId --limit 1 | jq -r '.[0].databaseId')
+          runId=$(gh run list --repo ${{ secrets.GH_DEPLOY_REPO }} --workflow ${{ secrets.GH_DEPLOY_WORKFLOW }} --json id --limit 1 --jq '.[0].id')
+          databaseId=$(gh run list --repo ${{ secrets.GH_DEPLOY_REPO }} --run-number $runId --json databaseId --jq -r '.[0].databaseId')
           echo "::set-output name=databaseId::$databaseId"
 
       - name: Deploy Completed
