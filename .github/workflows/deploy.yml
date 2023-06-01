@@ -19,7 +19,14 @@ jobs:
         run: |
           gh workflow run ${{ secrets.GH_DEPLOY_WORKFLOW }} --repo ${{ secrets.GH_DEPLOY_REPO }} --field environment=${{ inputs.environment }}
 
-      - run: gh run list --repo vycius/private-repo-sandbox --workflow=test.yml --json=databaseId --limit=1 --jq='.[0].databaseId'
+      - uses: actions/github-script@v6
+        id: run-id
+        with:
+          script: gh run list --repo vycius/private-repo-sandbox --workflow=test.yml --json=databaseId --limit=1 --jq='.[0].databaseId'
+          result-encoding: string
+
+      - name: Get result
+        run: echo "${{steps.run-id.outputs.result}}"
 
       - run: echo $(gh run list --repo ${{ secrets.GH_DEPLOY_REPO }} --workflow ${{ secrets.GH_DEPLOY_WORKFLOW }} --json databaseId --limit 1 --jq '.[0].id')
 
