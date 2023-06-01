@@ -23,7 +23,7 @@ jobs:
         run: |
           sleep 3
           runId=$(gh run list --repo ${{ secrets.GH_DEPLOY_REPO }} --workflow ${{ secrets.GH_DEPLOY_WORKFLOW }} --json databaseId --limit 1 --jq '.[0].id')
-          gh run watch --repo ${{ secrets.GH_DEPLOY_REPO }} $runId
+          gh run watch $runId --repo ${{ secrets.GH_DEPLOY_REPO }} --exit-status
 
       - name: Get databaseId
         id: get-database-id
