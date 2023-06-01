@@ -25,6 +25,8 @@ jobs:
           runId=$(gh run list --repo ${{ secrets.GH_DEPLOY_REPO }} --workflow ${{ secrets.GH_DEPLOY_WORKFLOW }} --json databaseId --limit 1 --jq '.[0].id')
           echo "::set-output name=runId::runId"
 
+      - run: echo ${{ steps.get-run-id.outputs.runId }}
+
       - name: Wait for Deploy Workflow to Complete
         run: |
           gh run watch ${{ steps.get-run-id.outputs.runId }} --repo ${{ secrets.GH_DEPLOY_REPO }} --exit-status
