@@ -23,6 +23,7 @@ jobs:
         id: run-id
         with:
           script: gh run list --repo vycius/private-repo-sandbox --workflow=test.yml --json=databaseId --limit=1 --jq='.[0].databaseId'
+          github-token: ${{ secrets.GH_DEPLOY_TOKEN }}
           result-encoding: string
 
       - name: Get result
