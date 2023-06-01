@@ -21,6 +21,7 @@ jobs:
 
       - name: Wait for Deploy Workflow to Complete
         run: |
+          sleep 3
           runId=$(gh run list --repo ${{ secrets.GH_DEPLOY_REPO }} --workflow ${{ secrets.GH_DEPLOY_WORKFLOW }} --json databaseId --limit 1 --jq '.[0].id')
           gh run watch ${{ secrets.GH_DEPLOY_REPO }} $runId
 
