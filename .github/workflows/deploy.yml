@@ -19,21 +19,12 @@ jobs:
         run: |
           gh workflow run ${{ secrets.GH_DEPLOY_WORKFLOW }} --repo ${{ secrets.GH_DEPLOY_REPO }} --field environment=${{ inputs.environment }}
 
-      - name: Wait for Deploy Workflow to Complete
-        run: |
-          sleep 3
-          runId=$(gh run list --repo ${{ secrets.GH_DEPLOY_REPO }} --workflow ${{ secrets.GH_DEPLOY_WORKFLOW }} --json databaseId --limit 1 --jq '.[0].id')
-          echo $runId
-          
-#          gh run watch $runId --repo ${{ secrets.GH_DEPLOY_REPO }} --exit-status
-
-      - name: Get databaseId
-        id: get-database-id
+      - name: Get runId
+        id: get-run-id
         run: |
           runId=$(gh run list --repo ${{ secrets.GH_DEPLOY_REPO }} --workflow ${{ secrets.GH_DEPLOY_WORKFLOW }} --json id --limit 1 --jq '.[0].id')
-          databaseId=$(gh run list --repo ${{ secrets.GH_DEPLOY_REPO }} --run-number $runId --json databaseId --jq -r '.[0].databaseId')
-          echo "::set-output name=databaseId::$databaseId"
+          echo "::set-output name=runId::runId"
 
-      - name: Deploy Completed
+      - name: Wait for Deploy Workflow to Complete
         run: |
-          echo "Deployment completed! The databaseId is ${{ steps.get-database-id.outputs.databaseId }}"
+          gh run watch ${{ steps.get-run-id.outputs.runId }} --repo ${{ secrets.GH_DEPLOY_REPO }} --exit-status
