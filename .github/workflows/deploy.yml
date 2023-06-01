@@ -22,7 +22,7 @@ jobs:
       - name: Get runId
         id: get-run-id
         run: |
-          runId=$(gh run list --repo ${{ secrets.GH_DEPLOY_REPO }} --workflow ${{ secrets.GH_DEPLOY_WORKFLOW }} --json id --limit 1 --jq '.[0].id')
+          runId=$(gh run list --repo ${{ secrets.GH_DEPLOY_REPO }} --workflow ${{ secrets.GH_DEPLOY_WORKFLOW }} --json databaseId --limit 1 --jq '.[0].id')
           echo "::set-output name=runId::runId"
 
       - name: Wait for Deploy Workflow to Complete
