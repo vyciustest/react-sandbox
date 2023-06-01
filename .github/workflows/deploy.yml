@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Deploy Workflow
-        uses: actions/github-script@v4
+        uses: actions/github-script@v6
         with:
           script: |
             const { data: { id: runId } } = await github.actions.createWorkflowDispatch({
