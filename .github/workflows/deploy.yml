@@ -14,14 +14,18 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GH_DEPLOY_TOKEN }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Trigger Deploy Workflow
-        run: |
-          gh workflow run test.yml --repo vycius/private-repo-sandbox --field environment=dev
-          
-          # Retrieve the databaseId using the GitHub CLI
-          databaseId=$(gh run list --repo vycius/private-repo-sandbox --workflow=test.yml --json=databaseId --limit=1 --jq='.[0].databaseId')
-          
-          # Watch the workflow run using the GitHub CLI
-          gh run watch --repo vycius/private-repo-sandbox "$databaseId"
+        run: gh workflow run test.yml --repo vycius/private-repo-sandbox --field environment=dev
+        shell: bash
+
+      - name: Retrieve databaseId
+        id: retrieve-databaseId
+        run: echo "::set-output name=databaseId::$(gh run list --repo vycius/private-repo-sandbox --workflow=test.yml --json=databaseId --limit=1 --jq='.[0].databaseId')"
+        shell: bash
+
+      - name: Watch workflow run
+        run: gh run watch --repo vycius/private-repo-sandbox "${{ steps.retrieve-databaseId.outputs.databaseId }}"
         shell: bash
