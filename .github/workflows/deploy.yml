@@ -23,9 +23,10 @@ jobs:
 
       - name: Retrieve databaseId
         id: retrieve-databaseId
-        run: echo "::set-output name=databaseId::$(gh run list --repo vycius/private-repo-sandbox --workflow=test.yml --json=databaseId --limit=1 --jq='.[0].databaseId')"
+        run: |
+          echo "databaseId=$(gh run list --repo vycius/private-repo-sandbox --workflow=test.yml --json=databaseId --limit=1 --jq='.[0].databaseId')" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Watch workflow run
-        run: gh run watch --repo vycius/private-repo-sandbox "${{ steps.retrieve-databaseId.outputs.databaseId }}"
+        run: gh run watch --repo vycius/private-repo-sandbox "${{ github.databaseId }}"
         shell: bash
