@@ -17,28 +17,11 @@ jobs:
       - uses: actions/checkout@v3
       - name: Trigger Deploy Workflow
         run: |
-          gh workflow run ${{ secrets.GH_DEPLOY_WORKFLOW }} --repo ${{ secrets.GH_DEPLOY_REPO }} --field environment=${{ inputs.environment }}
-
-      - uses: actions/github-script@v6
-        id: run-id
-        with:
-          script: gh run list --repo vycius/private-repo-sandbox --workflow=test.yml --json=databaseId --limit=1 --jq='.[0].databaseId'
-          github-token: ${{ secrets.GH_DEPLOY_TOKEN }}
-          result-encoding: string
-
-      - name: Get result
-        run: echo "${{steps.run-id.outputs.result}}"
-
-      - run: echo $(gh run list --repo ${{ secrets.GH_DEPLOY_REPO }} --workflow ${{ secrets.GH_DEPLOY_WORKFLOW }} --json databaseId --limit 1 --jq '.[0].id')
-
-      - name: Get runId
-        id: get-run-id
-        run: |
-          runId=$(gh run list --repo ${{ secrets.GH_DEPLOY_REPO }} --workflow ${{ secrets.GH_DEPLOY_WORKFLOW }} --json databaseId --limit 1 --jq '.[0].id')
-          echo "::set-output name=runId::runId"
-
-      - run: echo ${{ steps.get-run-id.outputs.runId }}
-
-      - name: Wait for Deploy Workflow to Complete
-        run: |
-          gh run watch ${{ steps.get-run-id.outputs.runId }} --repo ${{ secrets.GH_DEPLOY_REPO }} --exit-status
+          gh workflow run test.yml --repo vycius/private-repo-sandbox --field environment=dev
+          
+          # Retrieve the databaseId using the GitHub CLI
+          databaseId=$(gh run list --repo vycius/private-repo-sandbox --workflow=test.yml --json=databaseId --limit=1 --jq='.[0].databaseId')
+          
+          # Watch the workflow run using the GitHub CLI
+          gh run watch --repo vycius/private-repo-sandbox "$databaseId"
+        shell: bash
