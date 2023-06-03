@@ -1,0 +1,24 @@
+name: Deploy v2
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
+        description: Choose deploy environment
+
+jobs:
+  deploy-by-trigger-v2:
+    name: Release to production
+    runs-on: ubuntu-latest
+    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v2
+
+      - uses: convictional/trigger-workflow-and-wait@v1.6.1
+        with:
+          owner: vycius
+          repo: private-repo-sandbox
+          github_token: ${{ secrets.GH_DEPLOY_TOKEN }}
+          workflow_file_name: test.yml
+          client_payload: '{"environment": "dev"}'
