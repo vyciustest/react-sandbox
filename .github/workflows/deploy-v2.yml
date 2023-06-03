@@ -18,7 +18,7 @@ jobs:
       - uses: convictional/trigger-workflow-and-wait@v1.6.1
         with:
           owner: vycius
-          repo: private-repo-sandbox
+          repo: ${{ secrets.GH_DEPLOY_REPO }}
           github_token: ${{ secrets.GH_DEPLOY_TOKEN }}
-          workflow_file_name: test.yml
+          workflow_file_name: ${{ GH_DEPLOY_WORKFLOW }}
           client_payload: '{"environment": "dev"}'
