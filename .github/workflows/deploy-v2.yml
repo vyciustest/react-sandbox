@@ -20,5 +20,5 @@ jobs:
           owner: vycius
           repo: ${{ secrets.GH_DEPLOY_REPO }}
           github_token: ${{ secrets.GH_DEPLOY_TOKEN }}
-          workflow_file_name: ${{ GH_DEPLOY_WORKFLOW }}
+          workflow_file_name: ${{ secrets.GH_DEPLOY_WORKFLOW }}
           client_payload: '{"environment": "dev"}'
