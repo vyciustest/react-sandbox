@@ -1,0 +1,10 @@
+on:
+  release:
+    types: created
+
+jobs:
+  on-release:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo Hello
+    
